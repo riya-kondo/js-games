@@ -35,6 +35,11 @@ function keyPressed(){
   return false;
 }
 
+function touchStarted(){
+  bird.fly();
+  return false;
+}
+
 class Bird {
   constructor(){
     this.x = 100;
@@ -58,7 +63,6 @@ class Bird {
   fly(){
     this.yspeed = -10;
     this.y += this.yspeed;
-    console.log(this.y);
   }
 }
 
@@ -66,7 +70,7 @@ class Wall {
   constructor(){
     this.x = width;
     this.xspeed = -2;
-    this.y = random(height/4, (height/4)*3)
+    this.y = random(height/5, height-200)
     this.range = 200;
     this.width = 20;
   }
@@ -79,6 +83,11 @@ class Wall {
   }
 
   hit(b){
+    if(b.x > this.x && b.x < this.x+this.width){
+      if(b.y < this.y || b.y > this.y+this.range){
+        return true;
+      }
+    }
     return false;
   }
 
