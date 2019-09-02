@@ -22,8 +22,10 @@ function draw(){
       i--;
     }
   }
-  if(foods[0].lifeCount==0){
-    foods.splice(0, 1);
+  if(foods.length>0){
+    if(foods[0].lifeCount==0){
+      foods.splice(0, 1);
+    }
   }
   if(frameCount%25==0){
     let f = new Food();
@@ -59,10 +61,11 @@ class Snake{
     rect(this.places[0][0], this.places[0][1], this.size, this.size);
     for(let i=1; i<this.length; i++){
       rect(pre_posx, pre_posy, this.size, this.size);
-      pre_posx += this.xspeed;
-      pre_posy += this.yspeed;
-      //this.places[i][0] = pre_posx+this.xspeed;
-      //this.places[i][1] = pre_posy+this.yspeed;
+      let tmpx = this.places[i][0];
+      let tmpy = this.places[i][1];
+      this.places[i] = [pre_posx, pre_posy];
+      pre_posx = tmpx;
+      pre_posy = tmpy;
     }
     this.last_x = pre_posx;
     this.last_y = pre_posy;
@@ -72,6 +75,7 @@ class Snake{
 
   ate(){
     this.length++;
+    this.places.push([this.last_x, this.last_y]);
   }
 
   changeDir(posx, posy){
