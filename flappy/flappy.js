@@ -1,11 +1,14 @@
 const gravity = 1;
 const height = 780;
 const width = 480;
+var life = 5;
+var score = 0;
 var walls = new Array();
 
 function setup(){
   createCanvas(width, height);
   bird = new Bird();
+  scoreBoard = new Score();
   wall = new Wall();
   walls.push(wall);
 }
@@ -22,9 +25,23 @@ function draw(){
     }else if(walls.slice(-1)[0].x < width/2-walls.slice(-1)[0].width){
       let wall = new Wall();
       walls.push(wall);
-    }else if(walls[i].hit(bird)){
-      console.log('hit');
+    }else if(walls[i].hit(bird)&&bird.hittable){
+      bird.hittable = false;
+      life--;
+    }else if(walls[i].x+walls[i].width==bird.x&&bird.hittable){
+      scoreBoard.score++;
     }
+  }
+  if(bird.hittable==false){
+    if(frameCount%20==0){
+      bird.hittable=true;
+    }
+  }
+  if(life==0){
+    scoreBoard.over();
+    noLoop()
+  }else{
+    scoreBoard.update();
   }
 }
 
@@ -46,6 +63,8 @@ class Bird {
     this.y = height/2;
     this.yspeed = 1;
     this.size = 50;
+    this.hittable = true;
+    this.life = life;
   }
 
   update(){
@@ -56,7 +75,11 @@ class Bird {
       this.y = height-this.size/2;
       this.yspeed = 1;
     }
-    fill('#FFF');
+    if(this.hittable){
+      fill('#FFF');
+    }else{
+      fill('#F00');
+    }
     circle(this.x, this.y, this.size);
   }
 
@@ -90,5 +113,30 @@ class Wall {
     }
     return false;
   }
+}
 
+class Score {
+  constructor(){
+    this.score = score;
+    this.lifeText = '❤︎';
+    this.x = width/2;
+    this.y = height/4;
+    this.size = 32;
+  }
+
+  update(){
+    textSize(this.size);
+    textAlign(CENTER);
+    fill('#0F0');
+    text('score: '+this.score, this.x, this.y);
+    text(this.lifeText.repeat(life), this.x, this.y+this.size);
+  }
+
+  over(){
+    textSize(this.size);
+    textAlign(CENTER);
+    fill('#0F0');
+    text('gameover', this.x, this.y);
+    text('your final score: '+this.score, this.x, this.y+this.size);
+  }
 }
