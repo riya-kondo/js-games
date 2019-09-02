@@ -35,7 +35,24 @@ function draw(){
 }
 
 function mousePressed(){
-  snake.changeDir(mouseX, mouseY);
+  //snake.changeDir(mouseX, mouseY);
+  let dir = snake.calcDir(mouseX, mouseY);
+  snake.changeDir(dir);
+  return false;
+}
+
+function keyPressed(){
+  let dir = new String();
+  if(keyCode==UP_ARROW){
+    dir = 'up';
+  }else if(keyCode==DOWN_ARROW){
+    dir = 'down';
+  }else if(keyCode==RIGHT_ARROW){
+    dir = 'right';
+  }else if(keyCode==LEFT_ARROW){
+    dir = 'left';
+  }
+  snake.changeDir(dir);
   return false;
 }
 
@@ -78,15 +95,31 @@ class Snake{
     this.places.push([this.last_x, this.last_y]);
   }
 
-  changeDir(posx, posy){
+  calcDir(posx, posy){
+    let direction = new String();
     let diffx = posx - this.x;
     let diffy = posy - this.y;
     if(Math.abs(diffx) > Math.abs(diffy)){
-      this.xspeed = diffx < 0 ? -this.size : this.size;
-      this.yspeed = 0;
+      direction = diffx < 0 ? 'left' : 'right';
     }else{
+      direction = diffy < 0 ? 'up' : 'down';
+    }
+    return direction;
+  }
+
+  changeDir(dir){
+    if(dir=='up'&&this.yspeed!=this.size){
       this.xspeed = 0;
-      this.yspeed = diffy < 0 ? -this.size : this.size;
+      this.yspeed = -this.size;
+    }else if(dir=='down'&&this.yspeed!=-this.size){
+      this.xspeed = 0;
+      this.yspeed = this.size;
+    }else if(dir=='right'&&this.xspeed!=-this.size){
+      this.xspeed = this.size;
+      this.yspeed = 0;
+    }else if(dir=='left'&&this.xspeed!=this.size){
+      this.xspeed = -this.size;
+      this.yspeed = 0;
     }
   }
 }
