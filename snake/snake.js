@@ -2,6 +2,8 @@ const width = 680;
 const height = 680;
 const size = 20;
 var foods = new Array();
+var alive = true;
+var score = 0;
 
 function setup(){
   createCanvas(width, height);
@@ -19,6 +21,7 @@ function draw(){
     if(foods[i].eaten(snake)){
       foods.splice(i, 1);
       snake.ate();
+      score++;
       i--;
     }
   }
@@ -31,7 +34,11 @@ function draw(){
     let f = new Food();
     foods.push(f);
   }
-  snake.update();
+  alive = snake.update();
+  if(alive==false){
+    gameover();
+    noLoop();
+  }
 }
 
 function mousePressed(){
@@ -53,7 +60,20 @@ function keyPressed(){
     dir = 'left';
   }
   snake.changeDir(dir);
+  //DEBUG
+  if(key==' '){
+    snake.ate();
+  }
   return false;
+}
+
+function gameover(){
+  fill('#0F0');
+  let textsize = 32;
+  textAlign(CENTER);
+  textSize(textsize);
+  text('GAME OVER', width/2, height/2);
+  text('SCORE: '+score, width/2, height/2+textsize);
 }
 
 class Snake{
@@ -81,13 +101,26 @@ class Snake{
       let tmpx = this.places[i][0];
       let tmpy = this.places[i][1];
       this.places[i] = [pre_posx, pre_posy];
+      //自分に衝突しているか確認
+      if(this.places[0][0]==pre_posx
+        &&this.places[0][1]==pre_posy){
+        return false;
+      }
       pre_posx = tmpx;
       pre_posy = tmpy;
     }
     this.last_x = pre_posx;
     this.last_y = pre_posy;
+    //壁に衝突しているか確認
+    if(this.places[0][0]<0
+      || this.places[0][0]+this.size>width
+      || this.places[0][1]<0
+      || this.places[0][1]+this.size>height){
+      return false;
+    }
     this.x = this.places[0][0];
     this.y = this.places[0][1];
+    return true;
   }
 
   ate(){
