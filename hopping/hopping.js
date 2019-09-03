@@ -11,6 +11,11 @@ function setup(){
 function draw(){
   clear();
   background('#FFF');
+  if (keyIsDown(RIGHT_ARROW)) {
+    hopper.move(3); 
+  } else if (keyIsDown(LEFT_ARROW)) {
+    hopper.move(-3);
+  }
   hopper.switchSpeed();
   hopper.update();
 }
@@ -33,6 +38,15 @@ class Hopper{
   switchSpeed(){
     if(this.y >= height-size/2){
       this.yspeed = -20;
+    }
+  }
+
+  move(xmove){
+    this.x += xmove;
+    if(this.x-this.size/2 > width){
+      this.x = 0;
+    }else if(this.x+this.size/2 < 0){
+      this.x = width;
     }
   }
 }
