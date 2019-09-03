@@ -3,13 +3,14 @@ const height = 680;
 const size = 40;
 const gravity = 1;
 var bars = new Array();
+var ground = height;
 
 function setup(){
   createCanvas(width, height);
   hopper = new Hopper();
   let range = height/4;
   for(let i=0; i<4; i++){
-    bar = new Bar(height-(range+range*i));
+    bar = new Bar(range*i);
     bars.push(bar);
   }
 }
@@ -17,15 +18,26 @@ function setup(){
 function draw(){
   clear();
   background('#FFF');
+  hopper.switchSpeed();
   if (keyIsDown(RIGHT_ARROW)) {
     hopper.move(3); 
   } else if (keyIsDown(LEFT_ARROW)) {
     hopper.move(-3);
   }
+  var groundCount = 0;
   for(let i=0; i<bars.length; i++){
+    if(bars[i].hit(hopper)){
+      if(bars[i].y < ground){
+        ground = bars[i].y
+        groundCount++;
+      }
+    }else{
+      if(groundCount==0){
+        ground = height;
+      }
+    }
     bars[i].update();
   }
-  hopper.switchSpeed();
   hopper.update();
 }
 
@@ -41,13 +53,11 @@ class Hopper{
     fill('#000');
     this.y += this.yspeed;
     this.yspeed += gravity;
-    circle(this.x, this.y, this.size);
-  }
-
-  switchSpeed(){
-    if(this.y >= height-size/2){
+    //次に移動したら下に地面がある場合は移動方向を反転
+    if(this.y+this.size/2+this.yspeed >= ground){
       this.yspeed = -20;
     }
+    circle(this.x, this.y, this.size);
   }
 
   move(xmove){
@@ -72,6 +82,16 @@ class Bar{
   update(){
     fill('#000');
     this.y += this.yspeed;
-    rect(this.x, this.y, this.width, this.height, 10, 10, 10, 10)
+    //rect(this.x, this.y, this.width, this.height, 10, 10, 10, 10)
+    rect(this.x, this.y, this.width, this.height)
+  }
+
+  hit(hp){
+    if(hp.x <= this.x + this.width
+      && hp.x >= this.x
+      && hp.y+hp.size/2 <= this.y){
+      return true;
+    }
+    return false;
   }
 }
