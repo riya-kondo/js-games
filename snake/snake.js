@@ -60,10 +60,6 @@ function keyPressed(){
     dir = 'left';
   }
   snake.changeDir(dir);
-  //DEBUG
-  if(key==' '){
-    snake.ate();
-  }
   return false;
 }
 
