@@ -4,6 +4,7 @@ const size = 40;
 const gravity = 1;
 var bars = new Array();
 var ground = height;
+var score = 0;
 
 function setup(){
   createCanvas(width, height);
@@ -32,20 +33,48 @@ function draw(){
       }
     }else{
       if(groundCount==0){
-        ground = height;
+        if (score>hopper.size){
+          ground = height+1000;
+        }else{
+          ground = height;
+        }
       }
     }
     bars[i].update();
   }
-  if(ground < height/2){
-    moveFrame();
+  if(score>height/2){
+    //画面が登る速度は以下の式により決定する。
+    // y = (1/2) * root(target-x); [y: speed, x:current ground]
+    if(ground < (height/4)*3+hopper.size){
+      let lift =1/2 * Math.sqrt(((height/4)*3+hopper.size - ground));
+      moveFrame(lift);
+    }
+  }else{
+    if(ground < (height/2)+hopper.size){
+      let lift =1/3 * Math.sqrt(((height/2)+hopper.size - ground));
+      moveFrame(lift);
+    }
   }
   hopper.update();
+
+  //score表示
+  fill('#0F0');
+  let textsize = 32;
+  textSize(textsize);
+  if(hopper.y>height){
+    textAlign(CENTER)
+    text('GAMEOVER', width/2, height/3);
+    text('SCORE: '+score, width/2, height/3+textsize);
+  }else{
+    textAlign(RIGHT)
+    text('SCORE: '+score, width, textsize);
+  }
 }
 
-function moveFrame(){
+function moveFrame(lift){
   for(let i=0; i<bars.length; i++){
-    bars[i].y += 1;
+    bars[i].y += lift;
+    score += 1;
     if(bars[i].y > height){
       bars.splice(i, 1);
       i--;
@@ -55,6 +84,7 @@ function moveFrame(){
   }
   hopper.y += 1;
 }
+
 
 class Hopper{
   constructor(){
@@ -102,8 +132,8 @@ class Bar{
   }
 
   hit(hp){
-    if(hp.x <= this.x + this.width
-      && hp.x >= this.x
+    if(hp.x-hp.size/2 <= this.x + this.width
+      && hp.x+hp.size/2 >= this.x
       && hp.y+hp.size/2 <= this.y){
       return true;
     }
