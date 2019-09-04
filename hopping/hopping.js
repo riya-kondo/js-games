@@ -18,7 +18,6 @@ function setup(){
 function draw(){
   clear();
   background('#FFF');
-  hopper.switchSpeed();
   if (keyIsDown(RIGHT_ARROW)) {
     hopper.move(3); 
   } else if (keyIsDown(LEFT_ARROW)) {
@@ -38,7 +37,23 @@ function draw(){
     }
     bars[i].update();
   }
+  if(ground < height/2){
+    moveFrame();
+  }
   hopper.update();
+}
+
+function moveFrame(){
+  for(let i=0; i<bars.length; i++){
+    bars[i].y += 1;
+    if(bars[i].y > height){
+      bars.splice(i, 1);
+      i--;
+      let bar = new Bar(-20);
+      bars.push(bar);
+    }
+  }
+  hopper.y += 1;
 }
 
 class Hopper{
