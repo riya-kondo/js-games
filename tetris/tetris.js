@@ -127,12 +127,15 @@ class Field {
     return true;
   }
   goBottomed(){
-    for(let row=rows-this.block.y; row>=0; row--){
-      if(this.canMove(0, row-1)){
-        this.block.y += row-1;
+    let down = 0;
+    for(let row=1; row<rows-1; row++){
+      if(this.canMove(0, row)){
+        down = row;
+      }else{
         break;
       }
     }
+    this.block.y += down;
   }
   checkBotomed(){
     this.field = this.bottomed();
