@@ -100,20 +100,20 @@ class Field {
     }
     if(frameCount%5==0){
       if(this.canMove(0, 1)){
-        this.block.y += this.block.yspeed;
+        //this.block.y += this.block.yspeed;
       }else{
-        this.checkBotomed();
+        this.bottomed();
       }
     }
-    this.block.createShape();
+    this.block.updateShape();
     this.isLined(rows-1);
   }
   canMove(xmove, ymove, movedShape){
     let ypos = this.block.y + ymove;
     let xpos = this.block.x + xmove;
     let moved = movedShape || this.block.shape
-    for (let i = 0; i < 4; i++){
-      for (let j = 0; j < 4; j++){
+    for (let i = 0; i < this.block.shapeLength; i++){
+      for (let j = 0; j < this.block.shapeLength; j++){
         if (moved[i][j]){
           if (ypos+i>=this.btm
               || xpos+j < this.left
@@ -137,22 +137,19 @@ class Field {
     }
     this.block.y += down;
   }
-  checkBotomed(){
-    this.field = this.bottomed();
-    this.block = new Block();
-  }
   bottomed(){
     let xpos = this.block.x;
     let ypos = this.block.y;
     let f = this.field;
-    for (let row=0; row<4; row++){
-      for (let col=0; col<4; col++){
+    for (let row=0; row<this.block.shapeLength; row++){
+      for (let col=0; col<this.block.shapeLength; col++){
         if (this.block.shape[row][col]){
           f[ypos+row][xpos+col] = true;
         }
       }
     }
-    return f;
+    this.field = f;
+    this.block = new Block();
   }
   isLined(){
     //下からラインが揃っているか走査
@@ -174,16 +171,18 @@ class Block {
     this.y = 0;
     this.yspeed = 1;
     this.blockId = int(random(0,shapes.length));
-    //this.blockType = shapes[0];
+    this.shapeLength = this.blockId==0 ? 4 : 3;
     this.shape = this.initShape();
   }
   initShape(){
     var shape = [];
-    for (let i = 0; i<4; i++) {
-      shape[i] = new Array(4).fill(false);
-      for (let j=0; j<4; j++){
-        if(shapes[this.blockId][i]){
-          if(shapes[this.blockId][i][j]){
+    let length = this.shapeLength;
+    shape[0] = new Array(length).fill(false);
+    for (let i = 1; i<length; i++) {
+      shape[i] = new Array(length).fill(false);
+      for (let j=0; j<length; j++){
+        if(shapes[this.blockId][i-1]){
+          if(shapes[this.blockId][i-1][j]){
             shape[i][j] = true
           }
         }
@@ -191,7 +190,7 @@ class Block {
     }
     return shape;
   }
-  createShape(){
+  updateShape(){
     let xpos = this.x;
     let ypos = this.y;
     for (let i = 0; i < this.shape.length; i++){
@@ -206,10 +205,12 @@ class Block {
   }
   rotate(){
     var rotated = [];
-    for (let i = 0; i < 4; i++) {
+    //回転行列の公式に従う
+    //(x_r, y_r) = ((cos90, -sin90), (sin90, cos90))(x,y)
+    for (let i = 0; i < this.shapeLength; i++) {
       rotated[i] = [];
-      for (let j = 0; j < 4; j++) {
-        rotated[i][j] = this.shape[j][-i+3];
+      for (let j = 0; j < this.shapeLength ; j++) {
+        rotated[i][j] = this.shape[j][-i+this.shapeLength-1];
       }
     }
     return rotated;
