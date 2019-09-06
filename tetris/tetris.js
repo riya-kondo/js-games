@@ -117,12 +117,15 @@ class Field {
     let moved = movedShape || this.block.shape
     for (let i = 0; i < this.block.shapeLength; i++){
       for (let j = 0; j < this.block.shapeLength; j++){
-        if (moved[i][j] && ypos>=0){
+        if (moved[i][j]){
           if (ypos+i>=this.btm
               || xpos+j < this.left
-              || xpos+j >= this.right
-              || this.field[ypos+i][xpos+j]){
+              || xpos+j >= this.right){
             return false;
+          }else if(ypos>=0){
+            if(this.field[ypos+i][xpos+j]){
+              return false;
+            }
           }
         }
       }
