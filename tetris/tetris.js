@@ -15,6 +15,7 @@ const shapes = [
   [[0, 1, 1, 0], 
    [0, 1, 1, 0]], //O
 ]
+const blockRot = [2, 2, 2, 4, 4, 4, 1]
 const colors = ["cyan", "red", "green", "purple", "blue", "orange", "yellow"];
 const rows = 20;
 const cols = 12;
@@ -47,7 +48,9 @@ function draw() {
 
 function keyPressed() {
   if (keyCode == SHIFT) {
-    let rotated = field.block.rotate();
+    field.block.state++;
+    let r = field.block.state % blockRot[field.block.blockId]
+    rotated = field.block.rotate(r);
     if (field.canMove(0, 0, rotated)){
       field.block.shape = rotated;
     }
@@ -100,7 +103,7 @@ class Field {
     }
     if(frameCount%5==0){
       if(this.canMove(0, 1)){
-        //this.block.y += this.block.yspeed;
+        this.block.y += this.block.yspeed;
       }else{
         this.bottomed();
       }
@@ -114,7 +117,7 @@ class Field {
     let moved = movedShape || this.block.shape
     for (let i = 0; i < this.block.shapeLength; i++){
       for (let j = 0; j < this.block.shapeLength; j++){
-        if (moved[i][j]){
+        if (moved[i][j] && ypos>=0){
           if (ypos+i>=this.btm
               || xpos+j < this.left
               || xpos+j >= this.right
@@ -168,11 +171,12 @@ class Field {
 class Block {
   constructor() {
     this.x = 5;
-    this.y = 0;
+    this.y = -2;
     this.yspeed = 1;
     this.blockId = int(random(0,shapes.length));
     this.shapeLength = this.blockId==0 ? 4 : 3;
     this.shape = this.initShape();
+    this.state = 0;
   }
   initShape(){
     var shape = [];
@@ -193,7 +197,7 @@ class Block {
   updateShape(){
     let xpos = this.x;
     let ypos = this.y;
-    for (let i = 0; i < this.shape.length; i++){
+    for (let i = 0; i < this.shapeLength; i++){
       let row = this.shape[i];
       for (let j=0; j<row.length; j++){
         if (row[j]){
@@ -203,14 +207,16 @@ class Block {
       }
     }
   }
-  rotate(){
-    var rotated = [];
+  rotate(r){
+    var rotated = this.initShape();
     //回転行列の公式に従う
     //(x_r, y_r) = ((cos90, -sin90), (sin90, cos90))(x,y)
-    for (let i = 0; i < this.shapeLength; i++) {
-      rotated[i] = [];
-      for (let j = 0; j < this.shapeLength ; j++) {
-        rotated[i][j] = this.shape[j][-i+this.shapeLength-1];
+    for (let t=0; t<r; t++){
+      for (let i = 0; i < this.shapeLength; i++) {
+        rotated[i] = [];
+        for (let j = 0; j < this.shapeLength ; j++) {
+          rotated[i][j] = this.shape[j][-i+this.shapeLength-1];
+        }
       }
     }
     return rotated;
