@@ -10,18 +10,18 @@ function setup(){
   createCanvas(width, height);
   bar = new Bar();
   ball = new Ball();
-  let initX = width/3;
+  let initX = width/5;
   let blockX = initX;
-  let blockY = height/4;
+  let blockY = height/6;
   for(let i=0; i<24; i++){
-    b = new Block(blockX, blockY);
-    blocks.push(b);
     if(i%6==0){
       blockX = initX;
       blockY += 50;
     }else{
       blockX += 110;
     }
+    b = new Block(blockX, blockY);
+    blocks.push(b);
   }
 }
 
@@ -30,6 +30,20 @@ function draw(){
   background('#FFF');
   bar.update();
   ball.update();
+  for(let i=0; i<blocks.length; i++){
+    blocks[i].update();
+    if(ball.collision(blocks[i])){
+      let diffX = ball.x - ball.startPosition[0];
+      let diffY = ball.y - ball.startPosition[1];
+      if(diffY > 0){
+        ball.changeDir(1, -1);
+      }else{
+        ball.changeDir(1, -1);
+      }
+      blocks.splice(i, 1);
+      i--;
+    }
+  }
   if(keyIsPressed){
     if(keyCode==RIGHT_ARROW){
       bar.move(5);
@@ -74,6 +88,7 @@ class Ball{
     this.y = height/2;
     this.yspeed = 3;
     this.size = 20;
+    this.startPosition = [this.x, this.y];
   }
 
   update(){
@@ -82,9 +97,9 @@ class Ball{
     this.y += this.yspeed;
     circle(this.x, this.y, this.size);
     if(this.x-this.size <= 0
-      || this.x+this.size >= width){
+      || this.x+this.size/2 >= width){
       this.changeDir(-1, 1);
-    }else if(this.y-this.size <= 0){
+    }else if(this.y-this.size/2 <= 0){
       this.changeDir(1, -1);
     }
   }
@@ -103,6 +118,7 @@ class Ball{
   changeDir(x, y){
     this.xspeed *= x;
     this.yspeed *= y;
+    this.startPosition = [this.x, this.y];
   }
 }
 
@@ -117,6 +133,6 @@ class Block{
 
   update(){
     fill(this.color);
-    
+    rect(this.x, this.y, this.width, this.height);
   }
 }
