@@ -1,24 +1,28 @@
+const ROWS = 20;
+const COLS = 15;
+var block;
 var width;
 var height;
+var size;
 var currentPoint;
 var blocks = new Array();
 
 function setup(){
-  width = windowWidth;
-  height = windowHeight;
+  block = windowHeight/ROWS;
+  width = block*COLS;
+  height = block*ROWS;
   currentPoint = width/2;
   createCanvas(width, height);
-  bar = new Bar();
-  ball = new Ball();
-  let initX = width/5;
-  let blockX = initX;
-  let blockY = height/6;
+  bar = new Bar(block*COLS/2, block*(ROWS-3));
+  ball = new Ball(100, block*(ROWS/2));
+  let blockX;
+  let blockY=0;
   for(let i=0; i<24; i++){
     if(i%6==0){
-      blockX = initX;
-      blockY += 50;
+      blockX = block;
+      blockY += block+10;
     }else{
-      blockX += 110;
+      blockX += block+50;
     }
     b = new Block(blockX, blockY);
     blocks.push(b);
@@ -33,10 +37,10 @@ function draw(){
   for(let i=0; i<blocks.length; i++){
     blocks[i].update();
     if(ball.collision(blocks[i])){
-      let diffX = ball.x - ball.startPosition[0];
-      let diffY = ball.y - ball.startPosition[1];
-      if(diffY > 0){
-        ball.changeDir(1, -1);
+      let centerx = ball.x;
+      let centery = ball.y;
+      if(centery > blocks[i].y && centery+ball.size < blocks[i].y + blocks[i].height){
+        ball.changeDir(-1, 1);
       }else{
         ball.changeDir(1, -1);
       }
@@ -54,6 +58,10 @@ function draw(){
   if(ball.collision(bar)){
     ball.changeDir(1, -1);
   }
+
+  if(ball.y-ball.size/2 > height){
+    gameover();
+  }
 }
 
 function mouseMoved(){
@@ -62,32 +70,39 @@ function mouseMoved(){
   return false;
 }
 
+function gameover(){
+  fill('#0F0');
+  textAlign(CENTER);
+  text('GAMEOVER', width/2, height/2);
+  noLoop();
+}
+
 class Bar{
-  constructor(){
-    this.x = width/2;
-    this.y = height/5*4
-    this.width = 300;
-    this.height = 20;
+  constructor(x, y){
+    this.x = x;
+    this.y = y;
+    this.width = block*4;
+    this.height = block;
   }
 
   update(){
     fill('#000');
-    rect(this.x, this.y, this.width, 20);
+    rect(this.x, this.y, this.width, this.height);
   }
   move(movex){
-    if(this.x+movex >= 0 && this.x+movex+this.width < windowWidth){
+    if(this.x+movex >= 0 && this.x+movex+this.width < block*COLS){
       this.x += movex
     }
   }
 }
 
 class Ball{
-  constructor(){
-    this.x = width/2;
-    this.xspeed = -3;
-    this.y = height/2;
-    this.yspeed = 3;
-    this.size = 20;
+  constructor(x, y){
+    this.x = x;
+    this.xspeed = block/4;
+    this.y = y;
+    this.yspeed = block/4;
+    this.size = block;
     this.startPosition = [this.x, this.y];
   }
 
@@ -96,16 +111,18 @@ class Ball{
     this.x += this.xspeed;
     this.y += this.yspeed;
     circle(this.x, this.y, this.size);
+    line(0, this.y, width, this.y);
     if(this.x-this.size <= 0
       || this.x+this.size/2 >= width){
       this.changeDir(-1, 1);
     }else if(this.y-this.size/2 <= 0){
       this.changeDir(1, -1);
     }
+    this.startPosition = [this.x, this.y];
   }
 
   collision(obj){
-    if(obj.x + obj.width > this.x
+    if(this.x < obj.x + obj.width
       && obj.x < this.x
       && obj.y < this.y
       && obj.y + obj.height > this.y){
@@ -118,7 +135,6 @@ class Ball{
   changeDir(x, y){
     this.xspeed *= x;
     this.yspeed *= y;
-    this.startPosition = [this.x, this.y];
   }
 }
 
@@ -126,8 +142,8 @@ class Block{
   constructor(x, y){
     this.x = x;
     this.y = y;
-    this.width = 100;
-    this.height = 30; 
+    this.width = block*2;
+    this.height = block;
     this.color = '#000';
   }
 
