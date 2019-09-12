@@ -34,6 +34,7 @@ function draw(){
   background('#FFF');
   bar.update();
   ball.update();
+  ball.move()
   for(let i=0; i<blocks.length; i++){
     if(ball.collision(blocks[i])){
       let centerx = ball.x;
@@ -111,25 +112,31 @@ class Ball{
   }
 
   update(){
+    this.startPosition = [this.x, this.y];
     fill('#F00');
-    this.x += this.xspeed;
-    this.y += this.yspeed;
     circle(this.x, this.y, this.size);
     line(0, this.y, width, this.y);
+  }
+  move(){
+    this.x += this.xspeed;
+    this.y += this.yspeed;
     if(this.x-this.size <= 0
       || this.x+this.size/2 >= width){
       this.changeDir(-1, 1);
     }else if(this.y-this.size/2 <= 0){
       this.changeDir(1, -1);
     }
-    this.startPosition = [this.x, this.y];
   }
 
   collision(obj){
-    if(this.x < obj.x + obj.width
-      && obj.x < this.x
-      && obj.y < this.y
-      && obj.y + obj.height > this.y){
+    let nextx = this.x+this.xspeed;
+    let nexty = this.y+this.yspeed;
+    if(nextx <= obj.x + obj.width
+      && obj.x <= nextx
+      && obj.y <= nexty
+      && obj.y + obj.height >= nexty){
+      let xpos = this.startPosition[0];
+      let ypos = this.startPosition[1];
       return true;
     }else{
       return false;
