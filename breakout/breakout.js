@@ -35,7 +35,6 @@ function draw(){
   bar.update();
   ball.update();
   for(let i=0; i<blocks.length; i++){
-    blocks[i].update();
     if(ball.collision(blocks[i])){
       let centerx = ball.x;
       let centery = ball.y;
@@ -46,6 +45,9 @@ function draw(){
       }
       blocks.splice(i, 1);
       i--;
+    }
+    if(i>=0){
+      blocks[i].update();
     }
   }
   if(keyIsPressed){
@@ -60,7 +62,9 @@ function draw(){
   }
 
   if(ball.y-ball.size/2 > height){
-    gameover();
+    gamestop('GAMEOVER');
+  }else if(blocks.length==0){
+    gamestop('GAMECLEAR');
   }
 }
 
@@ -70,10 +74,10 @@ function mouseMoved(){
   return false;
 }
 
-function gameover(){
+function gamestop(string){
   fill('#0F0');
   textAlign(CENTER);
-  text('GAMEOVER', width/2, height/2);
+  text(string, width/2, height/2);
   noLoop();
 }
 
