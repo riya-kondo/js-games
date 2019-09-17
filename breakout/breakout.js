@@ -8,7 +8,7 @@ var currentPoint;
 var blocks = new Array();
 
 function setup(){
-  block = windowHeight/ROWS;
+  block = int(windowHeight/ROWS);
   width = block*COLS;
   height = block*ROWS;
   currentPoint = width/2;
