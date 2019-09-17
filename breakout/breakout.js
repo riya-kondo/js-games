@@ -33,16 +33,18 @@ function draw(){
   clear();
   background('#FFF');
   bar.update();
-  ball.update();
   ball.move()
+  ball.update();
   for(let i=0; i<blocks.length; i++){
     if(ball.collision(blocks[i])){
-      let centerx = ball.x;
-      let centery = ball.y;
-      if(centery > blocks[i].y && centery+ball.size < blocks[i].y + blocks[i].height){
+      let lastx = ball.lastx;
+      let lasty = ball.lasty;
+      if(lastx > blocks[i].x && lastx < blocks[i].x + blocks[i].width){
+        ball.changeDir(1, -1);
+      }else if(lasty > blocks[i].y && lasty < blocks[i].y + blocks[i].height){
         ball.changeDir(-1, 1);
       }else{
-        ball.changeDir(1, -1);
+        ball.changeDir(-1, -1);
       }
       blocks.splice(i, 1);
       i--;
@@ -59,7 +61,13 @@ function draw(){
     }
   }
   if(ball.collision(bar)){
-    ball.changeDir(1, -1);
+    let lasty = ball.lasty;
+    if(lasty <= bar.y){
+      let dirx = ((ball.x - (bar.x + bar.width/2))*ball.xspeed < 0) ? -1 : 1;
+      ball.changeDir(dirx, -1);
+    }else{
+      ball.changeDir(-1, 1);
+    }
   }
 
   if(ball.y-ball.size/2 > height){
@@ -104,23 +112,25 @@ class Bar{
 class Ball{
   constructor(x, y){
     this.x = x;
-    this.xspeed = block/4;
+    this.xspeed = block/5;
     this.y = y;
-    this.yspeed = block/4;
+    this.yspeed = block/5;
     this.size = block;
-    this.startPosition = [this.x, this.y];
+    this.lastx = x;
+    this.lasty = y; 
   }
 
   update(){
-    this.startPosition = [this.x, this.y];
     fill('#F00');
     circle(this.x, this.y, this.size);
-    line(0, this.y, width, this.y);
   }
   move(){
+    this.lastx = this.x
+    this.lasty = this.y
     this.x += this.xspeed;
     this.y += this.yspeed;
-    if(this.x-this.size <= 0
+    //壁の当たり判定
+    if(this.x-this.size/2 <= 0
       || this.x+this.size/2 >= width){
       this.changeDir(-1, 1);
     }else if(this.y-this.size/2 <= 0){
@@ -135,8 +145,6 @@ class Ball{
       && obj.x <= nextx
       && obj.y <= nexty
       && obj.y + obj.height >= nexty){
-      let xpos = this.startPosition[0];
-      let ypos = this.startPosition[1];
       return true;
     }else{
       return false;
