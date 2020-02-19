@@ -1,5 +1,6 @@
 const ROWS = 20;
 const COLS = 15;
+
 var block;
 var width;
 var height;
@@ -13,8 +14,8 @@ function setup(){
   height = block*ROWS;
   currentPoint = width/2;
   createCanvas(width, height);
-  bar = new Bar(block*COLS/2, block*(ROWS-3));
-  ball = new Ball(100, block*(ROWS/2));
+  bar = new Bar(block*COLS/2, block*(ROWS-3), 100, 20);
+  ball = new Ball(100, block*(ROWS/2), 5);
   let blockX;
   let blockY=0;
   for(let i=0; i<24; i++){
@@ -24,7 +25,7 @@ function setup(){
     }else{
       blockX += block+50;
     }
-    b = new Block(blockX, blockY);
+    b = new Block(blockX, blockY, 30, 20);
     blocks.push(b);
   }
 }
@@ -88,86 +89,4 @@ function gamestop(string){
   textAlign(CENTER);
   text(string, width/2, height/2);
   noLoop();
-}
-
-class Bar{
-  constructor(x, y){
-    this.x = x;
-    this.y = y;
-    this.width = block*4;
-    this.height = block;
-  }
-
-  update(){
-    fill('#000');
-    rect(this.x, this.y, this.width, this.height);
-  }
-  move(movex){
-    if(this.x+movex >= 0 && this.x+movex+this.width < block*COLS){
-      this.x += movex
-    }
-  }
-}
-
-class Ball{
-  constructor(x, y){
-    this.x = x;
-    this.xspeed = block/5;
-    this.y = y;
-    this.yspeed = block/5;
-    this.size = block;
-    this.lastx = x;
-    this.lasty = y; 
-  }
-
-  update(){
-    fill('#F00');
-    circle(this.x, this.y, this.size);
-  }
-  move(){
-    this.lastx = this.x
-    this.lasty = this.y
-    this.x += this.xspeed;
-    this.y += this.yspeed;
-    //壁の当たり判定
-    if(this.x-this.size/2 <= 0
-      || this.x+this.size/2 >= width){
-      this.changeDir(-1, 1);
-    }else if(this.y-this.size/2 <= 0){
-      this.changeDir(1, -1);
-    }
-  }
-
-  collision(obj){
-    let nextx = this.x+this.xspeed;
-    let nexty = this.y+this.yspeed;
-    if(nextx <= obj.x + obj.width
-      && obj.x <= nextx
-      && obj.y <= nexty
-      && obj.y + obj.height >= nexty){
-      return true;
-    }else{
-      return false;
-    }
-  }
-
-  changeDir(x, y){
-    this.xspeed *= x;
-    this.yspeed *= y;
-  }
-}
-
-class Block{
-  constructor(x, y){
-    this.x = x;
-    this.y = y;
-    this.width = block*2;
-    this.height = block;
-    this.color = '#000';
-  }
-
-  update(){
-    fill(this.color);
-    rect(this.x, this.y, this.width, this.height);
-  }
 }
