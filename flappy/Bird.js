@@ -1,19 +1,18 @@
 class Bird {
-  constructor(){
+  constructor(init_y){
     this.x = 100;
-    this.y = height/2;
+    this.y = init_y;
     this.yspeed = 1;
     this.size = 50;
     this.hittable = true;
-    this.life = life;
   }
 
-  update(){
-    if(this.y+this.yspeed < height-this.size/2){
+  update(h, gravity=1){
+    if(this.y+this.yspeed < h-this.size/2){
       this.y += this.yspeed;
       this.yspeed += gravity;
     }else{
-      this.y = height-this.size/2;
+      this.y = h-this.size/2;
       this.yspeed = 1;
     }
     if(this.hittable){

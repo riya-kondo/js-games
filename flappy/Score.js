@@ -1,18 +1,22 @@
 class Score {
-  constructor(){
+  constructor(init_x, init_y){
     this.score = 0;
     this.lifeText = '❤︎';
-    this.x = width/2;
-    this.y = height/4;
+    this.x = init_x;
+    this.y = init_y;
     this.size = 32;
   }
 
-  update(){
+  update(life){
     textSize(this.size);
     textAlign(CENTER);
     fill('#0F0');
     text('score: '+this.score, this.x, this.y);
     text(this.lifeText.repeat(life), this.x, this.y+this.size);
+  }
+
+  addScore(){
+    this.score++;
   }
 
   over(){

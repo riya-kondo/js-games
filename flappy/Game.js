@@ -1,37 +1,36 @@
-const gravity = 1;
 let height;
 let width;
-var life = 5;
-var score = 0;
-var walls = new Array();
+let life = 5;
+let walls = new Array();
 
 function setup(){
   height = windowHeight;
   width = (windowWidth < height/2) ? windowWidth : height/2;
   createCanvas(width, height);
   bird = new Bird();
-  scoreBoard = new Score();
-  wall = new Wall();
+  scoreBoard = new Score(width/2, height/4);
+  wall = new Wall(random(height/5, height-200), height);
   walls.push(wall);
 }
 
 function draw(){
   clear();
   background('#FFF');
-  bird.update();
+  bird.update(height);
   for(let i=0; i<walls.length; i++){
     walls[i].update();
     if(walls[i].x < 0-walls[i].width){
       walls.splice(i, 1);
       i--;
     }else if(walls.slice(-1)[0].x < width/2-walls.slice(-1)[0].width){
-      let wall = new Wall();
+      let wall = new Wall(random(height/5, height-200), height);
       walls.push(wall);
-    }else if(walls[i].hit(bird)&&bird.hittable){
+    }
+    if(walls[i].hit(bird)&&bird.hittable){
       bird.hittable = false;
       life--;
     }else if(walls[i].x+walls[i].width==bird.x&&bird.hittable){
-      scoreBoard.score++;
+      scoreBoard.addScore();
     }
   }
   if(bird.hittable==false){
@@ -43,7 +42,7 @@ function draw(){
     scoreBoard.over();
     noLoop()
   }else{
-    scoreBoard.update();
+    scoreBoard.update(life);
   }
 }
 
