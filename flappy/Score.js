@@ -1,6 +1,6 @@
 class Score {
   constructor(){
-    this.score = score;
+    this.score = 0;
     this.lifeText = '❤︎';
     this.x = width/2;
     this.y = height/4;

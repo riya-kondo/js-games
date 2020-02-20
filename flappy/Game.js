@@ -1,11 +1,13 @@
 const gravity = 1;
-const height = 680;
-const width = 480;
+let height;
+let width;
 var life = 5;
 var score = 0;
 var walls = new Array();
 
 function setup(){
+  height = windowHeight;
+  width = (windowWidth < height/2) ? windowWidth : height/2;
   createCanvas(width, height);
   bird = new Bird();
   scoreBoard = new Score();
