@@ -1,10 +1,10 @@
 class Ball {
-  constructor(x, y, speed){
+  constructor(x, y, size, speed){
     this.x = x;
     this.xspeed = speed;
     this.y = y;
     this.yspeed = speed;
-    this.size = block;
+    this.size = size;
     this.lastx = x;
     this.lasty = y; 
   }
@@ -19,13 +19,6 @@ class Ball {
     this.lasty = this.y
     this.x += this.xspeed;
     this.y += this.yspeed;
-    //壁の当たり判定
-    if(this.x-this.size/2 <= 0
-      || this.x+this.size/2 >= width){
-      this.changeDir(-1, 1);
-    }else if(this.y-this.size/2 <= 0){
-      this.changeDir(1, -1);
-    }
   }
 
   collision(obj){

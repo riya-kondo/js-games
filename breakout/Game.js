@@ -1,31 +1,39 @@
 const ROWS = 20;
 const COLS = 15;
 
-var block;
-var width;
-var height;
-var size;
-var currentPoint;
-var blocks = new Array();
+let block;
+let width;
+let height;
+let currentBarPoint;
+
+let ballSize = 30;
+
+let margin = 10;
+let blockWidth;
+let blockHeight;
+let numBlocks;
+let blocks = new Array();
 
 function setup(){
-  block = int(windowHeight/ROWS);
-  width = block*COLS;
-  height = block*ROWS;
-  currentPoint = width/2;
+  height = windowHeight;
+  width = (windowWidth < height/2) ? windowWidth : height/2;
+  currentBarPoint = width/2;
   createCanvas(width, height);
-  bar = new Bar(block*COLS/2, block*(ROWS-3), 100, 20);
-  ball = new Ball(100, block*(ROWS/2), 5);
-  let blockX;
-  let blockY=0;
+  bar = new Bar(width/5, height-100, 100, 20);
+  ball = new Ball(100, height/2, ballSize, 5);
+
+  blockHeight = ((height/4)-(margin*7)) / 6;
+  blockWidth = (width-(margin*5)) / 4;
+  let blockMarginX=margin;
+  let blockMarginY=-blockHeight;
   for(let i=0; i<24; i++){
-    if(i%6==0){
-      blockX = block;
-      blockY += block+10;
+    if(i%4==0){
+      blockMarginX = margin;
+      blockMarginY += blockHeight + margin;
     }else{
-      blockX += block+50;
+      blockMarginX += blockWidth + margin;
     }
-    b = new Block(blockX, blockY, 30, 20);
+    b = new Block(blockMarginX, blockMarginY, blockWidth, blockHeight);
     blocks.push(b);
   }
 }
@@ -71,6 +79,14 @@ function draw(){
     }
   }
 
+  //壁の当たり判定
+  if(ball.x-ball.size/2 <= 0
+    || ball.x+ball.size/2 >= width){
+    ball.changeDir(-1, 1);
+  }else if(ball.y-ball.size/2 <= 0){
+    ball.changeDir(1, -1);
+  }
+
   if(ball.y-ball.size/2 > height){
     gamestop('GAMEOVER');
   }else if(blocks.length==0){
@@ -79,9 +95,18 @@ function draw(){
 }
 
 function mouseMoved(){
-  bar.move(mouseX-currentPoint);
-  currentPoint = mouseX;
+  let moveLength = mouseX - currentBarPoint;
+  if(bar.x+moveLength >= 0 && bar.x+bar.width+moveLength < width){
+    bar.move(mouseX-currentBarPoint);
+  }
+  currentBarPoint = mouseX;
   return false;
+}
+
+function keyPressed(){
+  if(key==' '){
+    gamestop('PAUSE')
+  }
 }
 
 function gamestop(string){
