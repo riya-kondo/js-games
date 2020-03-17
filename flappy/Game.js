@@ -19,18 +19,20 @@ function draw(){
   bird.update(height);
   for(let i=0; i<walls.length; i++){
     walls[i].update();
+    if(walls[i].hit(bird)&&bird.hittable){
+      // ヒット処理
+      bird.hittable = false;
+      life--;
+    }else if(walls[i].x+walls[i].width==bird.x&&bird.hittable){
+      // スコア加算
+      scoreBoard.addScore();
+    }
     if(walls[i].x < 0-walls[i].width){
       walls.splice(i, 1);
       i--;
     }else if(walls.slice(-1)[0].x < width/2-walls.slice(-1)[0].width){
       let wall = new Wall(random(height/5, height-200), height);
       walls.push(wall);
-    }
-    if(walls[i].hit(bird)&&bird.hittable){
-      bird.hittable = false;
-      life--;
-    }else if(walls[i].x+walls[i].width==bird.x&&bird.hittable){
-      scoreBoard.addScore();
     }
   }
   if(bird.hittable==false){
