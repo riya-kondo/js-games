@@ -6,10 +6,11 @@ let walls = new Array();
 function setup(){
   height = windowHeight;
   width = (windowWidth < height/2) ? windowWidth : height/2;
+  width = (width%2 == 0) ? width : width + 1;
   createCanvas(width, height);
   bird = new Bird();
   scoreBoard = new Score(width/2, height/4);
-  wall = new Wall(random(height/5, height-200), height);
+  wall = new Wall(width, random(height/5, height-200), height);
   walls.push(wall);
 }
 
@@ -23,15 +24,16 @@ function draw(){
       // ヒット処理
       bird.hittable = false;
       life--;
-    }else if(walls[i].x+walls[i].width==bird.x&&bird.hittable){
+    }else if(walls[i].x==bird.x&&bird.hittable){
       // スコア加算
       scoreBoard.addScore();
+      console.log('Beyond');
     }
     if(walls[i].x < 0-walls[i].width){
       walls.splice(i, 1);
       i--;
     }else if(walls.slice(-1)[0].x < width/2-walls.slice(-1)[0].width){
-      let wall = new Wall(random(height/5, height-200), height);
+      let wall = new Wall(width, random(height/5, height-200), height);
       walls.push(wall);
     }
   }

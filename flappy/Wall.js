@@ -1,6 +1,6 @@
 class Wall {
-  constructor(random_y, height){
-    this.x = width;
+  constructor(initx, random_y, height){
+    this.x = initx;
     this.xspeed = -2;
     this.y = random_y;
     this.range = 200;
