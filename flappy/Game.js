@@ -30,22 +30,27 @@ function draw(){
       console.log('Beyond');
     }
     if(walls[i].x < 0-walls[i].width){
+      // 配列から壁を削除
       walls.splice(i, 1);
       i--;
     }else if(walls.slice(-1)[0].x < width/2-walls.slice(-1)[0].width){
+      // 配列に壁を追加
       let wall = new Wall(width, random(height/5, height-200), height);
       walls.push(wall);
     }
   }
   if(bird.hittable==false){
-    if(frameCount%20==0){
+    // 壁にぶつかった時は一定の無敵時間を作る
+    if(frameCount%40==0){
       bird.hittable=true;
     }
   }
   if(life==0){
+    // ゲーム終了
     scoreBoard.over();
     noLoop()
   }else{
+    // 得点表示盤の更新
     scoreBoard.update(life);
   }
 }
