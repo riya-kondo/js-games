@@ -1,5 +1,5 @@
 class Food{
-  constructor(){
+  constructor(width, height, size){
     this.x = random(0, width-size);
     this.y = random(0, height-size);
     this.size = size;

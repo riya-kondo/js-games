@@ -1,6 +1,5 @@
 const width = 680;
 const height = 680;
-const size = 20;
 var foods = new Array();
 var alive = true;
 var score = 0;
@@ -8,8 +7,8 @@ var score = 0;
 function setup(){
   createCanvas(width, height);
   frameRate(4);
-  snake = new Snake();
-  food = new Food();
+  snake = new Snake(width, height);
+  food = new Food(width, height, 20);
   foods.push(food);
 }
 
@@ -31,7 +30,7 @@ function draw(){
     }
   }
   if(frameCount%25==0){
-    let f = new Food();
+    let f = new Food(width, height, 20);
     foods.push(f);
   }
   alive = snake.update();
