@@ -1,5 +1,5 @@
 class Snake{
-  constructor(width, height){
+  constructor(width, height, size){
     this.x = width/2;
     this.xspeed = 0;
     this.y = height/2;

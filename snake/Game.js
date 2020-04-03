@@ -7,7 +7,7 @@ var score = 0;
 function setup(){
   createCanvas(width, height);
   frameRate(4);
-  snake = new Snake(width, height);
+  snake = new Snake(width, height, 20);
   food = new Food(width, height, 20);
   foods.push(food);
 }
