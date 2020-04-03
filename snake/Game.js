@@ -41,9 +41,12 @@ function draw(){
 }
 
 function mousePressed(){
-  //snake.changeDir(mouseX, mouseY);
-  let dir = snake.calcDir(mouseX, mouseY);
-  snake.changeDir(dir);
+  if(alive){
+    let dir = snake.calcDir(mouseX, mouseY);
+    snake.changeDir(dir);
+  }else{
+    resetGame();
+  }
   return false;
 }
 
@@ -57,9 +60,19 @@ function keyPressed(){
     dir = 'right';
   }else if(keyCode==LEFT_ARROW){
     dir = 'left';
+  }else if(keyCode==ENTER&&alive==false){
+    resetGame();
   }
   snake.changeDir(dir);
   return false;
+}
+
+function resetGame(){
+  foods = new Array();
+  alive = true;
+  score = 0;
+  setup();
+  loop();
 }
 
 function gameover(){
@@ -69,4 +82,5 @@ function gameover(){
   textSize(textsize);
   text('GAME OVER', width/2, height/2);
   text('SCORE: '+score, width/2, height/2+textsize);
+  text('PRESS ENTER OR CLICK TO RESET GAME', width/2, height/2+textsize*2);
 }
