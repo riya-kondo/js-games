@@ -3,10 +3,11 @@ const height = 680;
 var foods = new Array();
 var alive = true;
 var score = 0;
+var framerate = 4;
 
 function setup(){
   createCanvas(width, height);
-  frameRate(4);
+  frameRate(framerate);
   snake = new Snake(width, height, 20);
   food = new Food(width, height, 20);
   foods.push(food);
@@ -21,6 +22,8 @@ function draw(){
       foods.splice(i, 1);
       snake.ate();
       score++;
+      framerate = framerate+2;
+      frameRate(framerate);
       i--;
     }
   }
@@ -71,6 +74,7 @@ function resetGame(){
   foods = new Array();
   alive = true;
   score = 0;
+  framerate = 4;
   setup();
   loop();
 }
